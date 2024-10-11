@@ -5,6 +5,7 @@ from utils.misc import modules_help, prefix
 
 URL = "https://deliriusapi-official.vercel.app/ia"
 GEMINIIMG_URL = "https://bk9.fun/ai/geminiimg"
+COPILOT_URL = "https://itzpire.com/ai/bing-ai?model=Precise&q="  # Copilot API URL
 
 def clean_data(data):
     """Clean up the data received from the Blackbox API."""
@@ -57,9 +58,20 @@ async def describe_image(_, message: Message):
     url = f"{GEMINIIMG_URL}?url={image_url}&q={query}"
     await fetch_response(url, query, message, 'BK9')
 
+@Client.on_message(filters.command(["copilot"], prefix) & filters.me)
+async def copilot(_, message: Message):
+    if len(message.command) < 2:
+        await message.edit("Usage: `copilot <query>`")
+        return
+    
+    query = " ".join(message.command[1:])
+    url = f"{COPILOT_URL}{query}"
+    await fetch_response(url, query, message, 'result')
+
 modules_help["sarethai"] = {
     "gpt [query]*": "Ask anything to GPT-Web",
     "chatgpt [query]*": "Ask anything to GPT-Web",
     "gemini [query]*": "Ask anything to Gemini",
     "describe [image_url] [query]*": "Describe an image with a query",
+    "copilot [query]*": "Ask anything to Copilot AI",
 }
