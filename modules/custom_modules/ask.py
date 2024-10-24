@@ -3,7 +3,7 @@ from pyrogram import Client, enums, filters
 from pyrogram.types import Message
 from utils.misc import modules_help, prefix
 
-URL = "https://deliriusapi-oficial.vercel.app/ia"
+URL = "https://deliriussapi-oficial.vercel.app/ia"
 GEMINIIMG_URL = "https://bk9.fun/ai/geminiimg"
 COPILOT_URL = "https://itzpire.com/ai/bing-ai?model=Precise&q="  # Copilot API URL
 
