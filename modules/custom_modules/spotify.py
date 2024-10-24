@@ -23,7 +23,7 @@ async def spotify_search(client: Client, message: Message):
         return
     
     ms = await message.edit_text(f"<code>Searching for {query} on Spotify...</code>")
-    search_url = f"https://deliriusapi-official.vercel.app/search/spotify?q={query}"
+    search_url = f"https://deliriussapi-oficial.vercel.app/search/spotify?q={query}"
     response = requests.get(search_url)
     
     if response.status_code != 200:
@@ -42,7 +42,7 @@ async def spotify_search(client: Client, message: Message):
         await ms.edit_text(f"<code>Found: {song_name} </code>\nDownloading...")
 
         # Download song using the new Spotify downloader API
-        download_url = f"https://deliriusapi-official.vercel.app/download/spotifydl?url={song_url}"
+        download_url = f"https://deliriussapi-oficial.vercel.app/download/spotifydl?url={song_url}"
         download_response = requests.get(download_url)
         
         if download_response.status_code != 200:
