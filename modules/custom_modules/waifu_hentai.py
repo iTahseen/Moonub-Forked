@@ -11,7 +11,7 @@ from utils.misc import modules_help, prefix
 logging.basicConfig(level=logging.DEBUG)
 
 # Define the API URLs
-VIDEO_API_URL = "https://deliriusapi-official.vercel.app/anime/hentaivid"
+VIDEO_API_URL = "https://deliriussapi-oficial.vercel.app/anime/hentaivid"
 WAIFU_API_URL = "https://api.waifu.pics/nsfw/waifu"
 
 # Use a writable temporary directory
