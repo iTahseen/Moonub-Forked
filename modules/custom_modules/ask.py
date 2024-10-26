@@ -58,7 +58,7 @@ async def describe_image(_, message: Message):
     url = f"{GEMINIIMG_URL}?url={image_url}&q={query}"
     await fetch_response(url, query, message, 'BK9')
 
-@Client.on_message(filters.command(["copilot"], prefix) & filters.me)
+@Client.on_message(filters.command(["copilot", "ai"], prefix) & filters.me)
 async def copilot(_, message: Message):
     if len(message.command) < 2:
         await message.edit("Usage: `copilot <query>`")
