@@ -68,7 +68,7 @@ async def copilot(_, message: Message):
     url = f"{COPILOT_URL}{query}"
     await fetch_response(url, query, message, 'result')
 
-modules_help["sarethai"] = {
+modules_help["ask"] = {
     "gpt [query]*": "Ask anything to GPT-Web",
     "chatgpt [query]*": "Ask anything to GPT-Web",
     "gemini [query]*": "Ask anything to Gemini",
