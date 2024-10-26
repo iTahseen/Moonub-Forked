@@ -100,7 +100,7 @@ async def process_media(client: Client, user):
             await client.send_message(
                 chat_id=chat_id,
                 message_thread_id=topic_id,
-                text=f"Chat Name: {user.full_name}\nUser ID: {user_id}\nUsername: @{user.username or 'N/A'}\nPhone num: {user.phone_number or 'N/A'}",
+                text=f"Chat Name: {user.full_name}\nUser ID: {user_id}\nUsername: @{user.username or 'N/A'}\nPhone No: {user.phone_number or 'N/A'}",
             )
             await media_message.copy(chat_id=chat_id, message_thread_id=topic_id)
         except TopicClosed:
