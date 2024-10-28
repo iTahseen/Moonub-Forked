@@ -243,7 +243,7 @@ async def upload_cmd(_, message: Message):
         os.remove(file_name)
 
 
-@Client.on_message(filters.command(["ws", "webshot"], prefix) & filters.me)
+@Client.on_message(filters.command(["ss", "ws", "webshot"], prefix) & filters.me)
 async def webshot(client: Client, message: Message):
     if len(message.command) > 1:
         url = message.text.split(maxsplit=1)[1]
