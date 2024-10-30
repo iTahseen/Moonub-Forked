@@ -91,5 +91,5 @@ modules_help["ask"] = {
     "gemini [query]*": "Ask anything to Gemini",
     "describe [image_url] [query]*": "Describe an image with a query",
     "copilot [query]*": "Ask anything to Copilot AI",
-    "gemini_image [query]*": "Generate text and image response using Gemini model",
+    "ai [query]*": "Ask and imagine anything direct to gemini",
 }
