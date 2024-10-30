@@ -78,7 +78,7 @@ async def gemini_image(_, message: Message):
         await message.edit(f"**Question:**\n{query}\n**Answer:**\n{response_text}", parse_mode=enums.ParseMode.MARKDOWN)
 
         if images and images[0]:
-            await message.reply_photo(images[0], caption=f"**Prompt:**{query}")
+            await message.reply_photo(images[0], caption=f"**Prompt:** {query}")
 
     except requests.exceptions.RequestException:
         await message.edit("Error: Unable to retrieve data. Please try again later.")
