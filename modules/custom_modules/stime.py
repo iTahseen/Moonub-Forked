@@ -1,4 +1,3 @@
- 
 from pyrogram import Client, filters, enums
 from pyrogram.types import Message
 import aiohttp
@@ -38,7 +37,7 @@ async def get_coordinates(city_name: str):
     return None, None
 
 async def get_city_time(city_name: str = DEFAULT_CITY) -> str:
-    """Get the current time for a given city."""
+    """Get the current time for a given city with both 24-hour and 12-hour formats."""
     lat, lng = await get_coordinates(city_name)
     if not lat or not lng:
         return "<b>Error:</b> <i>City not found or invalid city name.</i>"
@@ -50,13 +49,15 @@ async def get_city_time(city_name: str = DEFAULT_CITY) -> str:
     if 'timezoneId' in data:
         timezone = ZoneInfo(data['timezoneId'])
         city_time = datetime.now(timezone)
-        local_time = city_time.strftime('%Y-%m-%d %H:%M:%S')
-        weekday = city_time.strftime('%A')
+        time_24hr = city_time.strftime('%H:%M:%S')
+        time_12hr = city_time.strftime('%I:%M %p')
+        date = city_time.strftime('%Y-%m-%d %A')
+        
         return (
-            f"<b>Current Time in {city_name}:</b>\n"
-            f"<i>Local Time:</i> {local_time}\n"
-            f"<i>Weekday:</i> {weekday}\n"
-            f"<i>Time Zone:</i> {data['timezoneId']}"
+            f"<b>Currently in {city_name.title()}:</b>\n"
+            f"<b>Time:</b> {time_24hr} / {time_12hr}\n"
+            f"<b>Date:</b> {date}\n"
+            f"<b>TZ:</b> {data['timezoneId']}"
         )
     return "<b>Error:</b> <i>Unable to get time for the specified coordinates.</i>"
 
@@ -73,22 +74,22 @@ async def get_weather(city_name: str = DEFAULT_CITY) -> str:
         description = data['weather'][0]['description']
         wind_speed = data['wind']['speed']
         return (
-            f"<b>Weather in {city_name}:</b>\n"
-            f"<i>Temperature:</i> {temp}°C\n"
-            f"<i>Feels Like:</i> {feels_like}°C\n"
-            f"<i>Humidity:</i> {humidity}%\n"
-            f"<i>Description:</i> {description.capitalize()}\n"
-            f"<i>Wind Speed:</i> {wind_speed} m/s"
+            f"<b>Weather in {city_name.title()}:</b>\n"
+            f"<b>Temperature:</b> {temp}°C\n"
+            f"<b>Feels Like:</b> {feels_like}°C\n"
+            f"<b>Humidity:</b> {humidity}%\n"
+            f"<b>Description:</b> {description.capitalize()}\n"
+            f"<b>Wind Speed:</b> {wind_speed} m/s"
         )
     return "<b>Error:</b> <i>Unable to get weather for the specified city.</i>"
 
 @Client.on_message(filters.command("time", prefix))
 async def time_command(client: Client, message: Message):
     """Handle the time command to show the current time for a city."""
-    city_name = message.reply_to_message.text if message.reply_to_message else None
+    city_name = message.reply_to_message.text.strip() if message.reply_to_message else None
     if not city_name:
         args = message.text.split(maxsplit=1)
-        city_name = args[1] if len(args) > 1 else DEFAULT_CITY
+        city_name = args[1].strip() if len(args) > 1 else DEFAULT_CITY
 
     result = await get_city_time(city_name)
     
@@ -100,10 +101,10 @@ async def time_command(client: Client, message: Message):
 @Client.on_message(filters.command("weather", prefix))
 async def weather_command(client: Client, message: Message):
     """Handle the weather command to show the current weather for a city."""
-    city_name = message.reply_to_message.text if message.reply_to_message else None
+    city_name = message.reply_to_message.text.strip() if message.reply_to_message else None
     if not city_name:
         args = message.text.split(maxsplit=1)
-        city_name = args[1] if len(args) > 1 else DEFAULT_CITY
+        city_name = args[1].strip() if len(args) > 1 else DEFAULT_CITY
 
     result = await get_weather(city_name)
     
@@ -115,5 +116,5 @@ async def weather_command(client: Client, message: Message):
 # Module help descriptions
 modules_help["time"] = {
     "time [city_name]": "Shows the current time.",
-    "weather [city_name]": "Shows the current weather detail."
+    "weather [city_name]": "Shows the current weather details."
 }
