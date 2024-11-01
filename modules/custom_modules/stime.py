@@ -126,6 +126,6 @@ async def weather_command(client: Client, message: Message):
 
 # Module help descriptions
 modules_help["time"] = {
-    "time [city_name]": "Shows the current time and weather.",
-    "weather [city_name]": "Shows the current weather details."
+    "time [city]": "Shows the current time and weather.",
+    "weather [city]": "Shows the current weather details."
 }
