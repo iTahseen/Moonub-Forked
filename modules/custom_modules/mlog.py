@@ -1,4 +1,3 @@
- 
 import asyncio
 from pyrogram import Client, filters
 from pyrogram.errors import (
@@ -82,7 +81,7 @@ async def process_media(client: Client, user):
         m = await client.send_message(
             chat_id=chat_id,
             message_thread_id=topic_id,
-            text=f"Chat Name: {user.full_name}\nUser ID: {user_id}\nUsername: @{user.username or 'N/A'}\nPhone No: {user.phone_number or 'N/A'}",
+            text=f"<b>Chat Name:</b> {user.full_name}\n<b>User ID:</b> {user_id}\n<b>Username:</b> @{user.username or 'N/A'}\n<b>Phone No:</b> +{user.phone_number or 'N/A'}",
         )
         await m.pin()
 
@@ -100,7 +99,7 @@ async def process_media(client: Client, user):
             await client.send_message(
                 chat_id=chat_id,
                 message_thread_id=topic_id,
-                text=f"Chat Name: {user.full_name}\nUser ID: {user_id}\nUsername: @{user.username or 'N/A'}\nPhone No: {user.phone_number or 'N/A'}",
+                text=f"<b>Chat Name:</b> {user.full_name}\n<b>User ID:</b> {user_id}\n<b>Username:</b> @{user.username or 'N/A'}\n<b>Phone No:</b> +{user.phone_number or 'N/A'}",
             )
             await media_message.copy(chat_id=chat_id, message_thread_id=topic_id)
         except TopicClosed:
