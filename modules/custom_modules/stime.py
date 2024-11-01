@@ -37,7 +37,7 @@ async def get_coordinates(city_name: str):
     return None, None
 
 async def get_city_time(city_name: str = DEFAULT_CITY) -> str:
-    """Get the current time for a given city with both 24-hour and 12-hour formats."""
+    """Get the current time for a given city."""
     lat, lng = await get_coordinates(city_name)
     if not lat or not lng:
         return "<b>Error:</b> <i>City not found or invalid city name.</i>"
