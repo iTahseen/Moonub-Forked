@@ -97,7 +97,7 @@ async def short_definition_command(client, message: Message):
             await message.edit_text("No results found.")
             return
 
-        short_definitions = f"**– Short Definitions of {word.capitalize()}:**\n\n"
+        short_definitions = f"**Short Definition of {word.capitalize()}:**\n\n"
         if isinstance(search_results[0], dict):
             for entry in search_results:
                 if 'shortdef' in entry:
