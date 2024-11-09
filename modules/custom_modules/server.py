@@ -64,8 +64,8 @@ text = (
     "  - <b>Aiohttp:</b> {}\n"
     "  - <b>GitPython:</b> {}\n\n"
     "<b>👤 User Information</b>\n"
-    "- <b>Current User:</b> {}\n"
-    "- <b>All Users:</b> {}\n"
+    "- <b>Current:</b> {}\n"
+    "- <b>All:</b> {}\n"
 )
 
 @Client.on_message(filters.command(["server", "sinfo"], prefix) & filters.me)
