@@ -68,7 +68,7 @@ text = (
     "- <b>All Users:</b> {}\n"
 )
 
-@Client.on_message(filters.command(["serverinfo", "sinfo"], prefix) & filters.me)
+@Client.on_message(filters.command(["server", "sinfo"], prefix) & filters.me)
 async def serverinfo_cmd(_: Client, message: Message):
     await message.edit("<b>🔄 Getting server info...</b>", parse_mode=enums.ParseMode.HTML)
 
@@ -117,6 +117,7 @@ async def serverinfo_cmd(_: Client, message: Message):
 
     await message.edit(text.format(*inf), parse_mode=enums.ParseMode.HTML)
 
-modules_help["serverinfo"] = {
+modules_help["server"] = {
     "sinfo": "Get detailed server info ℹ️",
+    "server": "Get detailed server info ℹ️"
 }
