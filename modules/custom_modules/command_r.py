@@ -9,7 +9,7 @@ from pyrogram.types import Message
 cohere = import_library("cohere")
 co = cohere.ClientV2(api_key=cohere_key)
 
-@Client.on_message(filters.command(["cr", "commandr"], prefix) & filters.me)
+@Client.on_message(filters.command(["cr", "crplus"], prefix) & filters.me)
 async def generate_text(c: Client, message: Message):
     # Extracting prompt from command or reply message
     prompt = (message.text.split(maxsplit=1)[1].strip() 
@@ -17,7 +17,7 @@ async def generate_text(c: Client, message: Message):
               if message.reply_to_message else None)
     
     if not prompt:
-        await message.edit_text(f"<b>Usage:</b> <code>{prefix}generate [prompt/reply to message]</code>")
+        await message.edit_text(f"<b>Usage:</b> <code>{prefix}commandr [prompt/reply to message]</code>")
         return
 
     await message.edit_text("<code>Umm, lemme think...</code>")
@@ -38,7 +38,7 @@ async def generate_text(c: Client, message: Message):
         await message.edit_text(f"An error occurred: {e}")
 
 # Updating the help dictionary for the module
-modules_help["generate"] = {
-    "cr [prompt/reply to message]": "Talk with Command-R Cohere AI model."
-    "commandr [prompt/reply to message]": "Talk with Command-R Cohere AI model."
+modules_help["command_r"] = {
+    "cr [prompt/reply to message]": "Talk with Command-R Cohere AI model.",
+    "crplus [prompt/reply to message]": "Talk with Command-R Cohere AI model."
 }
