@@ -19,60 +19,59 @@ commands = {
     'fvideor': enums.ChatAction.UPLOAD_VIDEO_NOTE,
     'fgame': enums.ChatAction.PLAYING,
     'fcontact': enums.ChatAction.CHOOSE_CONTACT,
-    'fstop': 'stop',  # special handling for stop
+    'fstop': enums.ChatAction.CANCEL,
     'fscrn': 'screenshot'
 }
 
-active_action = False  # Flag to track if an action is currently active
+# Active action flag
+active_action = False
 
 @Client.on_message(filters.command(list(commands), prefix) & filters.me)
 async def fakeactions_handler(client: Client, message: Message):
-    global active_action
+    global active_action  # Use the global flag to track ongoing actions
+    
     cmd = message.command[0]
     action = commands.get(cmd)
-
-    # If 'fstop' command is triggered, stop ongoing actions
-    if cmd == 'fstop':
-        active_action = False
-        await message.delete()
-        return
-
-    # Parse the duration (default to 1 if invalid)
+    
+    # Parse duration, defaulting to 1 second if not provided or invalid
     try:
         sec = int(message.command[1]) if len(message.command) > 1 else 1
     except ValueError:
         sec = 1  # Default to 1 second if an invalid duration is provided
-
+    
     # Delete the original command message
     await message.delete()
 
-    if action == 'screenshot':
-        # Special handling for screenshot action
-        if message.reply_to_message:
-            for _ in range(sec):
-                if not active_action:  # If stopped, break out of the loop
-                    break
-                await client.invoke(
-                    functions.messages.SendScreenshotNotification(
-                        peer=await client.resolve_peer(message.chat.id),
-                        reply_to=InputReplyToMessage(reply_to_message_id=message.reply_to_message.id),
-                        random_id=client.rnd_id(),
+    try:
+        if cmd == 'fstop':  # Stop any ongoing action
+            active_action = False  # Set flag to stop actions
+            return  # Exit the function after stopping the action
+        
+        if action == 'screenshot':  # Special handling for screenshot action
+            if message.reply_to_message:
+                for _ in range(sec):
+                    await client.invoke(
+                        functions.messages.SendScreenshotNotification(
+                            peer=await client.resolve_peer(message.chat.id),
+                            reply_to=InputReplyToMessage(reply_to_message_id=message.reply_to_message.id),
+                            random_id=client.rnd_id(),
+                        )
                     )
-                )
-                await sleep(1)
+                    await sleep(1)
+            else:
+                await client.send_message('me', "Error: 'fscrn' requires a reply to a message.")
         else:
-            await client.send_message('me', "Error: 'fscrn' requires a reply to a message.")
-    else:
-        # Handle other chat actions for the specified duration
-        active_action = True
-        end_time = sec
-        while end_time > 0 and active_action:
-            await client.send_chat_action(chat_id=message.chat.id, action=action)
-            await sleep(5)  # Resend every 5 seconds
-            end_time -= 5
-
-    # Reset action state when the duration is complete or action is stopped
-    active_action = False
+            # Handle other chat actions for the specified duration
+            active_action = True  # Set flag to indicate that an action is ongoing
+            end_time = sec
+            while end_time > 0 and active_action:  # Check if the action is still active
+                await client.send_chat_action(chat_id=message.chat.id, action=action)
+                await sleep(5)  # Resend every 5 seconds to maintain the action
+                end_time -= 5
+            active_action = False  # Reset the flag once the action completes
+    except Exception as e:
+        # Send any errors to the user's saved messages for debugging
+        await client.send_message('me', f"Error in fakeactions module:\n{format_exc(e)}")
 
 # Module help documentation for each command
 modules_help['fakeactions'] = {
