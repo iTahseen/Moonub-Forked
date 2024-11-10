@@ -19,51 +19,60 @@ commands = {
     'fvideor': enums.ChatAction.UPLOAD_VIDEO_NOTE,
     'fgame': enums.ChatAction.PLAYING,
     'fcontact': enums.ChatAction.CHOOSE_CONTACT,
-    'fstop': enums.ChatAction.CANCEL,
+    'fstop': 'stop',  # special handling for stop
     'fscrn': 'screenshot'
 }
 
+active_action = False  # Flag to track if an action is currently active
+
 @Client.on_message(filters.command(list(commands), prefix) & filters.me)
 async def fakeactions_handler(client: Client, message: Message):
-    # Parse the command to get the action and duration
+    global active_action
     cmd = message.command[0]
     action = commands.get(cmd)
-    
-    # Parse duration, defaulting to 1 second if not provided or invalid
+
+    # If 'fstop' command is triggered, stop ongoing actions
+    if cmd == 'fstop':
+        active_action = False
+        await message.delete()
+        return
+
+    # Parse the duration (default to 1 if invalid)
     try:
         sec = int(message.command[1]) if len(message.command) > 1 else 1
     except ValueError:
         sec = 1  # Default to 1 second if an invalid duration is provided
-    
+
     # Delete the original command message
     await message.delete()
 
-    try:
-        if action == 'screenshot':  # Special handling for screenshot action
-            if message.reply_to_message:
-                # Send screenshot notification every second for the specified duration
-                for _ in range(sec):
-                    await client.invoke(
-                        functions.messages.SendScreenshotNotification(
-                            peer=await client.resolve_peer(message.chat.id),
-                            reply_to=InputReplyToMessage(reply_to_message_id=message.reply_to_message.id),
-                            random_id=client.rnd_id(),
-                        )
+    if action == 'screenshot':
+        # Special handling for screenshot action
+        if message.reply_to_message:
+            for _ in range(sec):
+                if not active_action:  # If stopped, break out of the loop
+                    break
+                await client.invoke(
+                    functions.messages.SendScreenshotNotification(
+                        peer=await client.resolve_peer(message.chat.id),
+                        reply_to=InputReplyToMessage(reply_to_message_id=message.reply_to_message.id),
+                        random_id=client.rnd_id(),
                     )
-                    await sleep(1)
-            else:
-                # Send error message if `fscrn` is used without replying to a message
-                await client.send_message('me', "Error: 'fscrn' requires a reply to a message.")
+                )
+                await sleep(1)
         else:
-            # Handle other chat actions for the specified duration
-            end_time = sec
-            while end_time > 0:
-                await client.send_chat_action(chat_id=message.chat.id, action=action)
-                await sleep(5)  # Resend every 5 seconds to maintain the action
-                end_time -= 5
-    except Exception as e:
-        # Send any errors to the user's saved messages for debugging
-        await client.send_message('me', f"Error in fakeactions module:\n{format_exc(e)}")
+            await client.send_message('me', "Error: 'fscrn' requires a reply to a message.")
+    else:
+        # Handle other chat actions for the specified duration
+        active_action = True
+        end_time = sec
+        while end_time > 0 and active_action:
+            await client.send_chat_action(chat_id=message.chat.id, action=action)
+            await sleep(5)  # Resend every 5 seconds
+            end_time -= 5
+
+    # Reset action state when the duration is complete or action is stopped
+    active_action = False
 
 # Module help documentation for each command
 modules_help['fakeactions'] = {
