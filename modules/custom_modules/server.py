@@ -2,9 +2,8 @@ import os
 import platform
 import sys
 import datetime
-import psutil  # Ensure psutil is imported directly if available
-import requests  # For making HTTP requests to fetch the public IP
-
+import psutil
+import requests
 from pyrogram import Client, filters, enums
 from pyrogram.types import Message
 
@@ -80,7 +79,7 @@ text = (
 
 @Client.on_message(filters.command(["server", "sinfo"], prefix) & filters.me)
 async def serverinfo_cmd(_: Client, message: Message):
-    await message.edit("<code>🔄 Collecting server info...</code>", parse_mode=enums.ParseMode.HTML)
+    await message.edit("<code>🔄 Collecting info...</code>", parse_mode=enums.ParseMode.HTML)
 
     inf = []
     try:
