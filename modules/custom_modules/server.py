@@ -3,6 +3,7 @@ import platform
 import sys
 import datetime
 import psutil  # Ensure psutil is imported directly if available
+import requests  # For making HTTP requests to fetch the public IP
 
 from pyrogram import Client, filters, enums
 from pyrogram.types import Message
@@ -41,6 +42,14 @@ def get_os_info():
     except Exception:
         return "Unknown OS"
 
+# New function to get the server's public IP address
+def get_public_ip():
+    try:
+        response = requests.get("https://api.ipify.org?format=text")
+        return response.text
+    except requests.RequestException:
+        return "Unknown IP"
+
 text = (
     "<b>👾 Server Information</b>\n\n"
     "<b>🗄 Resource Usage</b>\n"
@@ -51,7 +60,8 @@ text = (
     "- <b>Uptime:</b> {}\n\n"
     "<b>🌐 Network Statistics</b>\n"
     "- <b>Sent:</b> {} MB\n"
-    "- <b>Received:</b> {} MB\n\n"
+    "- <b>Received:</b> {} MB\n"
+    "- <b>IP:</b> {}\n\n"
     "<b>🧾 Operating System & Kernel</b>\n"
     "- <b>OS:</b> {}\n"
     "- <b>Kernel:</b> {}\n"
@@ -70,7 +80,7 @@ text = (
 
 @Client.on_message(filters.command(["server", "sinfo"], prefix) & filters.me)
 async def serverinfo_cmd(_: Client, message: Message):
-    await message.edit("<b>🔄 Getting server info...</b>", parse_mode=enums.ParseMode.HTML)
+    await message.edit("<code>🔄 Collecting server info...</code>", parse_mode=enums.ParseMode.HTML)
 
     inf = []
     try:
@@ -89,6 +99,9 @@ async def serverinfo_cmd(_: Client, message: Message):
 
         inf.append(b2mb(psutil.net_io_counters().bytes_sent))
         inf.append(b2mb(psutil.net_io_counters().bytes_recv))
+
+        # Get the public IP address
+        inf.append(get_public_ip())
 
         # Use the new function to get OS information
         inf.append(get_os_info())
@@ -118,6 +131,6 @@ async def serverinfo_cmd(_: Client, message: Message):
     await message.edit(text.format(*inf), parse_mode=enums.ParseMode.HTML)
 
 modules_help["server"] = {
-    "sinfo": "Get detailed server info ℹ️",
-    "server": "Get detailed server info ℹ️"
+    "sinfo": "Get detailed server info.",
+    "server": "Get detailed server info."
 }
