@@ -7,7 +7,7 @@ from utils.misc import modules_help, prefix
 URL = "https://deliriussapi-oficial.vercel.app/ia"
 GEMINIIMG_URL = "https://bk9.fun/ai/geminiimg"
 COPILOT_URL = "https://itzpire.com/ai/bing-ai?model=Precise&q="
-NEW_GEMINI_URL = "https://www.samirxpikachu.run.place/Gemini-apu?text={query}&cookies=g.a000pgh-Mrk9f_o_PmDDsd5jqe48F2tjbUfXAY8kLdMsy0BGH3_b_6N4EaP-L7niFTV6Y1RmTwACgYKAZkSARISFQHGX2Mi_JfXzcVDskOHkOr_h50tRRoVAUF8yKrr6eIQN9_Bo8S_t8Z5e7yr0076"
+NEW_GEMINI_URL = "http://api-samirxz.onrender.com/Gemini-apu?text={query}&cookies=g.a000pgh-Mrk9f_o_PmDDsd5jqe48F2tjbUfXAY8kLdMsy0BGH3_b_6N4EaP-L7niFTV6Y1RmTwACgYKAZkSARISFQHGX2Mi_JfXzcVDskOHkOr_h50tRRoVAUF8yKrr6eIQN9_Bo8S_t8Z5e7yr0076"
 
 async def fetch_response(url: str, query: str, message: Message, response_key: str, reply=False):
     """Fetch the response from the API and send it back to the user."""
