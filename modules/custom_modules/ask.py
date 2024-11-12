@@ -72,7 +72,7 @@ async def gemini_image(client, message: Message):
         return
     query = " ".join(message.command[1:])
     url = NEW_GEMINI_URL.format(query=query)
-    response_msg = await message.reply("Thinking...") if not message.from_user.is_self else await message.edit("Thinking...")
+    response_msg = await message.reply("<code>Umm, lemme think...</code>") if not message.from_user.is_self else await message.edit("Thinking...")
 
     try:
         response = requests.get(url)
