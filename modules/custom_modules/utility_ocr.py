@@ -33,7 +33,7 @@ async def ocr_space(_, message: Message):
                 await message.edit("Error occurred during OCR processing. Please try again.")
             else:
                 parsed_text = result["ParsedResults"][0]["ParsedText"]
-                await message.edit(f"Extracted Text:\n{parsed_text}")
+                await message.edit(f"<b>Extracted Text:</b>\n{parsed_text}")
         else:
             await message.edit("An error occurred, please try again later.")
     except Exception as e:
