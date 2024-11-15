@@ -48,13 +48,50 @@ async def gemini(client, message: Message):
 
 @Client.on_message(filters.command(["describe"], prefix))
 async def describe_image(client, message: Message):
-    if len(message.command) < 3:
-        await message.reply("Usage: `describe <image_url> <query>`")
+    # Check if the message is a valid reply to an image
+    if not (message.reply_to_message and message.reply_to_message.photo):
+        response_text = "Reply to an image and provide a prompt. Usage: `describe <prompt>`"
+        # Edit the bot's own message or send a reply based on the user
+        if message.from_user.is_self:
+            await message.edit(response_text)
+        else:
+            await message.reply(response_text)
         return
-    image_url = message.command[1]
-    query = " ".join(message.command[2:])
-    url = f"{GEMINIIMG_URL}?url={image_url}&q={query}"
-    await fetch_response(url, query, message, 'BK9', reply=not message.from_user.is_self)
+
+    # Extract the prompt or default to "what is it"
+    prompt = " ".join(message.command[1:]).strip() or "Get details of given image, be as accurate as possible."
+
+    # Inform about the image downloading process
+    download_message = await (message.edit("<code>Umm, lemme analyze...</code>") if message.from_user.is_self else message.reply("Downloading image..."))
+    
+    # Download the image
+    photo_path = await client.download_media(message.reply_to_message.photo.file_id)
+
+    try:
+        # Upload the image to x0.at
+        upload_response = requests.post("https://x0.at", files={"file": open(photo_path, "rb")})
+        upload_response.raise_for_status()
+        image_url = upload_response.text.strip()
+
+        # Request the description from the Gemini image description API
+        url = f"{GEMINIIMG_URL}?url={image_url}&q={prompt}"
+        response = requests.get(url)
+        response.raise_for_status()
+        data = response.json()
+
+        description = data.get("BK9", "No description found.")
+        response_content = f"**Prompt:** {prompt}\n**Description:** {description}"
+
+        # Edit the appropriate message with the result
+        await download_message.edit(response_content, parse_mode=enums.ParseMode.MARKDOWN)
+
+    except requests.exceptions.RequestException:
+        await download_message.edit("Failed to process the image. Please try again later.")
+    except ValueError:
+        await download_message.edit("Invalid response received from the API.")
+    finally:
+        os.remove(photo_path)  # Clean up the downloaded image file
+
 
 @Client.on_message(filters.command(["copilot"], prefix))
 async def copilot(client, message: Message):
